@@ -18,7 +18,6 @@ export class TasksService {
 
     for (const doc of snapshot.docs) {
       const task = doc.data();
-
       const start = new Date(task.startDate.replace(' ', 'T'));
       const end = new Date(task.endDate.replace(' ', 'T'));
       start.setHours(start.getHours() + 1);
@@ -30,7 +29,16 @@ export class TasksService {
           // Fetch user email from Firebase Auth via FirebaseService
           const user = await this.firebaseService.auth.getUser(task.userId);
           const email = user.email;
-
+          const userDoc = await this.firebaseService.firestore
+            .collection('users')
+            .doc(user?.uid) // uid
+            .get();
+          if (userDoc?.data()?.emailNotification === false) {
+            this.logger.warn(
+              `This user ${user.uid} has not enabled email notifications`,
+            );
+            continue;
+          }
           if (!email) {
             this.logger.warn(`User ${task.userId} has no email`);
             continue;
