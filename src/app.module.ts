@@ -4,6 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TasksService } from './tasks/tasks.service';
 import { TasksModule } from './tasks/tasks.module';
 import { FirebaseService } from './firebase-admin.init';
+import { UsersModule } from './users/users.module';
+import { UsersService } from './users/users.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -11,7 +14,9 @@ import { FirebaseService } from './firebase-admin.init';
       isGlobal: true,
     }),
     TasksModule,
+    UsersModule,
+    ScheduleModule.forRoot(),
   ],
-  providers: [AppService, TasksService, FirebaseService],
+  providers: [AppService, TasksService, FirebaseService, UsersService],
 })
 export class AppModule {}
